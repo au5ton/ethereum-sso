@@ -8,16 +8,14 @@
     "src"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "prepare": "tsdx build"
   },
   "peerDependencies": {},
   "husky": {
@@ -34,20 +32,8 @@
   "name": "web3-sso",
   "author": "Austin Jackson",
   "module": "dist/web3-sso.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/web3-sso.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/web3-sso.esm.js",
-      "limit": "10 KB"
-    }
-  ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^4.12.0",
     "husky": "^6.0.0",
-    "size-limit": "^4.12.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.2.0",
     "typescript": "^4.3.2"

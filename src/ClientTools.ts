@@ -3,7 +3,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { ethers } from 'ethers';
 import { generateAffirmationMessage } from './CommonTools';
 
-export async function getProvider() {
+export async function getProvider(): Promise<ethers.providers.Web3Provider | null> {
   const provider = await detectEthereumProvider();
   if(provider) {
     return new ethers.providers.Web3Provider(provider as any);
@@ -85,4 +85,3 @@ export async function signNonce(nonce: string) {
   }
   return null;
 }
-

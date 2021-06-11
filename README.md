@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/au5ton/ethereum-sso/actions/workflows/main.yml/badge.svg)](https://github.com/au5ton/ethereum-sso/actions/workflows/main.yml)
 
-Isomorphic code that simplify using Ethereum/Web3.0 as a single sign-on system. Easy to implement in various clients and servers.
+Isomorphic code that simplifies Ethereum/Web3.0 as a single sign-on system. Easy to implement in various clients and servers.
 
 ## Inspiration
 

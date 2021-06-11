@@ -13,6 +13,31 @@ export async function getProvider(): Promise<ethers.providers.Web3Provider | nul
   }
 }
 
+/** Bypass ethers wrap */
+export const getRawProvider = async () => await detectEthereumProvider();
+
+/**
+ * Add an event listener to the raw provider
+ * @param eventName 
+ * @param listener 
+ */
+export function on(eventName: string | Array<string | Array<string>>, listener: (...args: Array<any>) => void) {
+  getRawProvider().then(rawProvider => {
+    (rawProvider as any).on(eventName, listener);
+  });
+}
+
+/**
+ * Remove an event listener to the raw provider
+ * @param eventName 
+ * @param listener 
+ */
+export function off(eventName: string | Array<string | Array<string>>, listener: (...args: Array<any>) => void) {
+  getRawProvider().then(rawProvider => {
+    (rawProvider as any).removeListener(eventName, listener);
+  });
+}
+
 /**
  * Returns a boolean depending on if the connected wallet has granted any permissions yet
  */

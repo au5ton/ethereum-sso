@@ -1,58 +1,58 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
+import { useAsync } from 'react-use';
 
 import MetaMaskOnboarding from '@metamask/onboarding'
-import { ethers } from 'ethers';
-
 import { ClientTools } from '../.';
 
 const App = () => {
-  const [buttonText, setButtonText] = useState<string>('Connect');
-  // const { data, error, isValidating } = useAtomFeed(sampleFeed);
-  // console.log('sampleFeed: ', data);
-  
-  useEffect(() => {
-    (async () => {
-      console.log('effect');
-      console.log('provider?', await ClientTools.getProvider());
-      console.log('accounts?', await ClientTools.getConnectedAccounts());
-    })();
-  }, []);
-
-  const connect = async () => {
-    const provider = await ClientTools.getProvider();
-    const res = await provider?.send('wallet_requestPermissions', [{ 'eth_accounts': {} }]);
-    console.log(res);
-  };
-
-  const perms = async () => {
-    const provider = await ClientTools.getProvider();
-    const res = await provider?.send('wallet_getPermissions', []);
-    console.log(res);
-  };
-
-  const sign = async () => {
-    const sig = await ClientTools.signNonce('1234-5678-9999');
-    console.log(sig);
-    console.log(await Common.validateSignature('1234-5678-9999', '0xFa446Bf0A2c05365E27F15c712244d8b5A92585e', sig!));
-  };
+  const accounts = useEthereumAccounts();
 
   return (
     <div>
       <h1>Hello, World!</h1>
-      <button onClick={connect}>Connect</button>
-      <button onClick={perms}>Get Permissions</button>
-      <button onClick={sign}>Sign</button>
-      {/* <OnboardingButton /> */}
-      {/* <pre>
-        {data !== undefined ? JSON.stringify(data, undefined, 2): ''}
-      </pre> */}
+      <p>Currently signed in accounts:</p>
+      <pre>{JSON.stringify(accounts, null, 2)}</pre>
+      <OnboardingButton />
     </div>
   );
 };
 
+export function useEthereum() {
+  const { value: ethereum } = useAsync(async () => await ClientTools.getProvider());
+  return ethereum ?? undefined;
+}
+
+/**
+ * Sample React hook that responds to account changes
+ * @returns 
+ */
+export function useEthereumAccounts() {
+  const [accounts, setAccounts] = React.useState<string[]>([]);
+  const ethereum = useEthereum();
+
+  React.useEffect(() => {
+    function handleAccountChange(newAccounts) {
+      setAccounts(newAccounts);
+    }
+    if (ethereum) {
+      ethereum
+        .send('eth_accounts', [])
+        .then(handleAccountChange);
+      ClientTools.on('accountsChanged', handleAccountChange);
+      return () => {
+        ClientTools.off('accountsChanged', handleAccountChange);
+      };
+    }
+  });
+
+  return accounts;
+}
+
+/**
+ * Sample React component that responds to account changes
+ */
 export function OnboardingButton() {
   const ONBOARD_TEXT = 'Click here to install MetaMask!';
   const CONNECT_TEXT = 'Connect';
@@ -62,20 +62,20 @@ export function OnboardingButton() {
   const [isDisabled, setDisabled] = React.useState(false);
   const [accounts, setAccounts] = React.useState([]);
   const onboarding = React.useRef<MetaMaskOnboarding>();
-  const ethereum = React.useRef<ethers.providers.Web3Provider>();
+  const ethereum = useEthereum();
   
-
+  /**
+   * Initialize library references
+   */
   React.useEffect(() => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
-    (async () => {
-      if (!ethereum.current) {
-        ethereum.current = await ClientTools.getProvider() ?? undefined;
-      }
-    })();
   }, []);
 
+  /**
+   * Update button text when accounts state is updated
+   */
   React.useEffect(() => {
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
       if (accounts.length > 0) {
@@ -89,24 +89,27 @@ export function OnboardingButton() {
     }
   }, [accounts]);
 
+  /**
+   * Update state when 
+   */
   React.useEffect(() => {
     function handleNewAccounts(newAccounts) {
       setAccounts(newAccounts);
     }
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      // window.ethereum
-      //   .request({ method: 'eth_requestAccounts' })
-      //   .then(handleNewAccounts);
-      ethereum.current?.on('accountsChanged', handleNewAccounts);
+    if (MetaMaskOnboarding.isMetaMaskInstalled() && ethereum) {
+      ethereum
+        .send('eth_accounts', [])
+        .then(handleNewAccounts);
+      ClientTools.on('accountsChanged', handleNewAccounts);
       return () => {
-        ethereum.current?.off('accountsChanged', handleNewAccounts);
+        ClientTools.off('accountsChanged', handleNewAccounts);
       };
     }
-  }, []);
+  }, [ethereum]);
 
   const onClick = () => {
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      ethereum.current?.send('eth_requestAccounts', [])
+    if (MetaMaskOnboarding.isMetaMaskInstalled() && ethereum) {
+      ethereum.send('eth_requestAccounts', [])
         .then((newAccounts) => setAccounts(newAccounts));
     } else {
       onboarding.current?.startOnboarding();

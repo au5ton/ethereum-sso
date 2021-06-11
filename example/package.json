@@ -10,7 +10,8 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-app-polyfill": "^1.0.0",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-use": "^17.2.4"
   },
   "alias": {
     "ethers": "../node_modules/ethers",

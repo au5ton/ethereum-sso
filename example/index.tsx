@@ -34,7 +34,7 @@ export function useEthereumAccounts() {
 
   React.useEffect(() => {
     function handleAccountChange(newAccounts) {
-      setAccounts(newAccounts);
+      setAccounts([...newAccounts]);
     }
     if (ethereum) {
       ethereum
@@ -60,9 +60,9 @@ export function OnboardingButton() {
 
   const [buttonText, setButtonText] = React.useState(ONBOARD_TEXT);
   const [isDisabled, setDisabled] = React.useState(false);
-  const [accounts, setAccounts] = React.useState([]);
-  const onboarding = React.useRef<MetaMaskOnboarding>();
   const ethereum = useEthereum();
+  const accounts = useEthereumAccounts();
+  const onboarding = React.useRef<MetaMaskOnboarding>();
   
   /**
    * Initialize library references
@@ -90,27 +90,12 @@ export function OnboardingButton() {
   }, [accounts]);
 
   /**
-   * Update state when 
+   * Handle click
    */
-  React.useEffect(() => {
-    function handleNewAccounts(newAccounts) {
-      setAccounts(newAccounts);
-    }
-    if (MetaMaskOnboarding.isMetaMaskInstalled() && ethereum) {
-      ethereum
-        .send('eth_accounts', [])
-        .then(handleNewAccounts);
-      ClientTools.on('accountsChanged', handleNewAccounts);
-      return () => {
-        ClientTools.off('accountsChanged', handleNewAccounts);
-      };
-    }
-  }, [ethereum]);
-
   const onClick = () => {
     if (MetaMaskOnboarding.isMetaMaskInstalled() && ethereum) {
-      ethereum.send('eth_requestAccounts', [])
-        .then((newAccounts) => setAccounts(newAccounts));
+      ClientTools.requestWalletConnection()
+        .then(success => console.log(success ? 'wallet connected!' : 'connection failed'));
     } else {
       onboarding.current?.startOnboarding();
     }

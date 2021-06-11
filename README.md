@@ -1,4 +1,4 @@
-# web3-sso
+# ethereum-sso
 
 ## TODO
 - ClientTools

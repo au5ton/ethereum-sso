@@ -17,7 +17,6 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build"
   },
-  "peerDependencies": {},
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
@@ -37,5 +36,14 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.2.0",
     "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "@metamask/detect-provider": "^1.2.0",
+    "@metamask/onboarding": "^1.0.1",
+    "@types/uuid": "^8.3.0",
+    "eth-sig-util": "^3.0.1",
+    "ethers": "^5.3.0",
+    "fetch-ponyfill": "^7.1.0",
+    "uuid": "^3.4.0"
   }
 }

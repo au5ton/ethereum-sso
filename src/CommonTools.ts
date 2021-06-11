@@ -1,24 +1,6 @@
 import fetchPonyfill from 'fetch-ponyfill';
 const { fetch } = fetchPonyfill();
-
-/**
- * Generates a string that looks like 1234-5678-9999... for the number of digits provided
- * @param digitLength 
- * @returns 
- * @deprecated
- */
-export function generateNonce(digitLength: number = 16) {
-  const segmentLength = 4;
-  let str = Number(Math.floor(10e6 + Math.random() * digitLength * Math.pow(10,digitLength - 1))).toFixed().split('');
-  
-  let offset = 0;
-  for(let start = segmentLength; start < (str.length - segmentLength); start += segmentLength) {
-    str.splice(start + offset, 0, '-');
-    offset++;
-  }
-
-  return str.join('');
-}
+import { ethers } from 'ethers'
 
 /**
  * Get the name of a particular chain based on its chainId, data sourced from: https://chainid.network
@@ -39,4 +21,31 @@ I hereby claim:
   * On the chain: ${await getChainName(chainId)} (chainId = ${chainId})
 
 To do so, I am signing this nonce: ${nonce}
-`
+`;
+
+/**
+ * Resolves an ENS name to an address
+ * @param provider 
+ * @param name 
+ * @returns 
+ */
+export const resolveName = async (provider: ethers.providers.BaseProvider, name: string) => await (await provider.resolveName(name)).toLocaleLowerCase();
+
+/**
+ * Resolves an address to an ENS name
+ * @param provider 
+ * @param address 
+ * @returns 
+ */
+export const lookupAddress = async (provider: ethers.providers.BaseProvider, address: string) => await (await provider.lookupAddress(address)).toLocaleLowerCase();
+
+/**
+ * Validates that the ENS name and address resolve to each other.
+ * @param provider 
+ * @param name 
+ * @param address 
+ * @returns 
+ */
+export const validateNameAddressPair = async (provider: ethers.providers.BaseProvider, name: string, address: string) => 
+  (await lookupAddress(provider, address)) === name &&
+  (await resolveName(provider, name)) === address;

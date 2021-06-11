@@ -1,10 +1,7 @@
-import { ServerTools, CommonTools } from '../src';
+// import { ServerTools } from '../src';
 
 describe('blah', () => {
   it('works', async () => {
-    const provider = ServerTools.getProvider();
-    console.log(await provider.lookupAddress('0x1a178248a4e3b57a8fcb8fb6ec69b3d3f9b337da'));
-
     expect(2).toEqual(2);
   });
 });

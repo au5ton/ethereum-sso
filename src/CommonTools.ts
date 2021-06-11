@@ -1,6 +1,6 @@
 import fetchPonyfill from 'fetch-ponyfill';
-const { fetch } = fetchPonyfill();
 import { ethers } from 'ethers'
+const { fetch } = fetchPonyfill();
 
 /**
  * Get the name of a particular chain based on its chainId, data sourced from: https://chainid.network

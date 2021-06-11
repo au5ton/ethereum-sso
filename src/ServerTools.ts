@@ -1,6 +1,6 @@
 import { recoverPersonalSignature } from 'eth-sig-util'
 import { ethers } from 'ethers';
-import { v4 as uuidv4 } from 'uuid';;
+import { v4 as uuidv4 } from 'uuid';
 import { generateAffirmationMessage } from './CommonTools';
 
 /** Options which are necessary to validate the signature. */
